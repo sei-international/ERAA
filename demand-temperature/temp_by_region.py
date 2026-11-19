@@ -1,9 +1,9 @@
 """ 
-The purpose of this script is to sort hourly temperature data by region and year for climate years 2021-2025. 
+The purpose of this script is to sort hourly temperature data by region and year for climate years 2010-2025. 
 
 This file returns the hourly temperature for every ERA5 grid cell, organised by region.
 Output (in OUT_DIR):
-    temperature_by_region_<year>.xlsx   one workbook per year (2021-2025)
+    temperature_by_region_<year>.xlsx   one workbook per year (2010-2025)
     cell_region_mapping.csv            
     cell_region_map.png                 
 
@@ -35,9 +35,7 @@ LOCAL_TZ = "Etc/GMT-2"                                 # fixed UTC+2
 
 #HELPER FUNCTIONS
 def open_temperature(year):
-    """Hourly 2 m temperature (K) for every grid cell of one cutout year.
-    The cutouts were prepared with atlite's "temperature" feature, so ERA5 2 m
-    temperature is stored in them directly, in Kelvin (variable 'temperature')."""
+    """Hourly 2 m temperature (K) for every grid cell of one cutout year"""
     path = CUTOUT_DIR / f"moldova_era5_{year}.nc"
     if not path.exists():
         return None
