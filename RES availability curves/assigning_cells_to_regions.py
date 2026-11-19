@@ -1,7 +1,7 @@
 #UNIVERSAL SETTINGS
 EQUAL_AREA_CRS = "EPSG:3035"  
 LOCAL_TZ = "Etc/GMT-2"     # translates ERA5's UTC to Moldova's local time (UTC+2, no daylight saving)
-MIN_OVERLAP = 0.0   
+MIN_OVERLAP= 0.25
 
 #IMPORTS
 import os
@@ -57,7 +57,8 @@ def map_cells_to_regions(cells, regions):
     # each cell -> region with the largest overlap
     primary = inter.loc[inter.groupby(["y", "x"])["overlap_frac"].idxmax()] #assigns each cell to the region that it is the largest share of. returns dataframe with 1 row per cell (cells cannot be in 2 regions anymore)
     # idxmax() is a method in geopandas that returns the max value. 
-    primary = primary[primary["overlap_frac"] >= MIN_OVERLAP] #keeps cells whose winning share (overlap fraction) is greater than 0. 
+   
+    primary = primary[primary["overlap_frac"] >= MIN_OVERLAP] #keeps cells whose winning share (overlap fraction) is greater than 0.25 
     mapping = primary[["region", "y", "x", "overlap_frac"]].assign(assignment="largest_overlap") #final GeoDF that will be used to map; 4 columns, including new assignment column
 
     names= []
@@ -68,7 +69,7 @@ def map_cells_to_regions(cells, regions):
 
     mapping = mapping.sort_values(["region", "y", "x"], ascending=[True, False, True])
     overlaps = pd.DataFrame(inter[["region", "y", "x", "overlap_frac"]]) #saves all overlap fractions, just for reference
-    return mapping.reset_index(drop=True), overlaps #returns the GeoDF and DF
+    return mapping.reset_index(drop=True), overlaps #returns DF with columns: region, y, x, overlap_frac, assignment, cell_id. Each row is a cell that has been assigned to a region. Also returns a DF with all overlaps (even those that were not assigned to a region).
 
 
 #plots regions and cells (indicating the cell center)
@@ -126,10 +127,11 @@ def run_regional(make_cf, name, years, cutout_dir, out_dir, regions_file, attrs=
     print(mapping.groupby("region").size().to_string())
      
     # one workbook per year, one sheet per region, one column per grid cell
-    for year, f in files.items():
+    for year, f in files.items():   
             with xr.open_dataarray(f) as da:
                 cf = da.load()
             times = pd.DatetimeIndex(cf.time.values)
+            #all time until this line are in UTC; this converts it to Moldovan time (not accounting for daylight savings)
             local = times.tz_localize("UTC").tz_convert(LOCAL_TZ).strftime("%Y-%m-%d %H:%M")
             out = os.path.join(out_dir, f"{name}_cf_by_region_{year}.xlsx")
             with pd.ExcelWriter(out) as xw:

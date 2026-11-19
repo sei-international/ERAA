@@ -16,8 +16,7 @@ at its peak where it would bend back (load must not fall as it gets colder/hotte
 2. Normalise the 2025 load (weather-neutral base profile)
        for each day d of 2025:  factor_d = f(T_normal,d) / f(T_2025,d)
        normalised load(h) = actual 2025 load(h) x factor_d   for all 24 hours of day d
-   This removes the effect of 2025 being warmer/colder than normal on each day.
-   The hourly shape within each day is kept.
+  
 
 3. Scale to the target annual energy
        scaled load = normalised load x (target GWh / normalised GWh)

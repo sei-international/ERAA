@@ -1,8 +1,7 @@
 """
-fit_demand_temperature.py
--------------------------
-Demand-temperature relationship per region, 2021-2025 (USAID 2024 method,
-step 1: report p.34, Figure 30), as ONE CUBIC POLYNOMIAL PER REGION PER YEAR,
+The purpose of this script is to fit the relationship between hourly electricity demand 
+and temperature for every region of Moldova, 2021-2025, using the USAID 2024 method (step 1: report p.34, Figure 30).
+This should return one cubic polynomial per region per year
 then averaged across the years.
 
 1. Daily values. For each region and each calendar day (fixed UTC+2):

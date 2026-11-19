@@ -1,6 +1,6 @@
+#This is a short script to make sure that the cutout files are readable and that the wind speeds are reasonable.
+
 import atlite
-
-
 cutout = atlite.Cutout(r"C:\Users\ehina\Python\cutouts\moldova_era5_2021.nc")
 ws = cutout.data["wnd100m"].load()
 

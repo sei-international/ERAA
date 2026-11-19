@@ -12,13 +12,13 @@ OUT_DIR = BASE / "solar_cf_output"                     # solar results in their 
 REGIONS_FILE = BASE.parent / "Moldova_ERAA_regions_full_partition.geojson"
 YEARS = range(2010, 2027)
 LOCAL_TZ = "Etc/GMT-2"                                 # fixed UTC+2
-MIN_OVERLAP = 0.0
+MIN_OVERLAP = 0.25
  
-PANEL = "CSi"                       # crystalline silicon, Huld (2010) model
-ORIENTATION = "latitude_optimal"    # fixed, south-facing, optimal tilt
-TRACKING = None                     # None = fixed; "horizontal" = single-axis
-LOSS_FACTOR = 0.97                  # soiling, wiring, downtime (inverter 0.9 is already applied inside atlite's CSi panel)
-                                    # 3% loss is same value used by PVWatts (https://aurorasolar.com/blog/understanding-pv-system-losses-part-2-wiring-connections-and-system-availability/)
+PANEL = "CSi"                       #crystalline silicon, Huld (2010) model
+ORIENTATION = "latitude_optimal"    #fixed, south-facing, optimal tilt
+TRACKING = None                     #None = fixed; "horizontal" = single-axis
+EFFICIENCY_FACTOR = 0.956           #default total system loss is 14% for Moldova (https://re.jrc.ec.europa.eu/pvg_tools/en/tools.html. 
+                                    #atlite's default interverter efficiency is 90% (which is already accounted for in the method), so the remaining losses are 4% (0.9*0.96 = 0.864, ~14% loss)
 # --------------------------------------------------------------------------
  
  
@@ -28,12 +28,12 @@ def solar_cf(cutout):
                    orientation=ORIENTATION,
                    tracking=TRACKING,
                    aggregate_time=None)                # keep every hour
-    return cf * LOSS_FACTOR
+    return cf * EFFICIENCY_FACTOR
  
  
 if __name__ == "__main__":
     run_regional(make_cf=solar_cf, name="solar", years=YEARS,
                  cutout_dir=CUTOUT_DIR, out_dir=OUT_DIR, regions_file=REGIONS_FILE,
                  attrs={"panel": PANEL, "orientation": str(ORIENTATION),
-                        "tracking": str(TRACKING), "loss_factor": LOSS_FACTOR})
+                        "tracking": str(TRACKING), "efficiency_factor": EFFICIENCY_FACTOR})
  
