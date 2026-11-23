@@ -18,10 +18,7 @@ PANEL = "CSi"                       #crystalline silicon, Huld (2010) model
 ORIENTATION = "latitude_optimal"    #fixed, south-facing, optimal tilt
 TRACKING = None                     #None = fixed; "horizontal" = single-axis
 EFFICIENCY_FACTOR = 0.956           #default total system loss is 14% for Moldova (https://re.jrc.ec.europa.eu/pvg_tools/en/tools.html. 
-                                    #atlite's default interverter efficiency is 90% (which is already accounted for in the method), so the remaining losses are 4% (0.9*0.96 = 0.864, ~14% loss)
-# --------------------------------------------------------------------------
- 
- 
+                                    #atlite's default inverter efficiency is 90% (which is already accounted for in the method), so the remaining losses are 4% (0.9*0.96 = 0.864, ~14% loss) 
 def solar_cf(cutout):
     """Hourly solar PV CF for every grid cell of one cutout."""
     cf = cutout.pv(panel=PANEL,

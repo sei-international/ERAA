@@ -55,7 +55,7 @@ FUTURE_YEARS = [2028, 2030, 2035]
 
 TARGET_TYPE = "peak"                       # "peak" (MW)
 # One target per future year for all 7 regions together: MW (peak) or GWh (energy).
-# None = no scaling (k = 1). Example for TARGET_TYPE = "peak": {2028: 1450.0, 2030: 1520.0, 2035: 1700.0}
+# None = no scaling (k = 1).
 TARGETS = {
     2028: 962,
     2030: 1023,
@@ -174,7 +174,7 @@ def main():
 
     # 3. one scale factor per future year, from the sum of all regions (coincident peak / energy)
     national = pd.DataFrame(normalized_all).sum(axis=1)
-    ref = national.max() if TARGET_TYPE == "peak" else national.sum() / 1000
+    ref = national.max()
     ks = {}
     for fy in FUTURE_YEARS:
         target = TARGETS.get(fy)

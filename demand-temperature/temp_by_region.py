@@ -20,7 +20,7 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 
-BASE = Path(__file__).resolve().parent                 # demand-temperature
+BASE = Path(__file__).resolve().parent               # demand-temperature
 sys.path.insert(0, str(BASE.parent / "RES availability curves"))
 from assigning_cells_to_regions import (load_regions, cell_polygons, 
                                         map_cells_to_regions, plot_mapping)

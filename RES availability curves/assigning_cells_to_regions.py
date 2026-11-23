@@ -31,7 +31,7 @@ def load_regions(regions_file):
 def cell_polygons(x, y):
     """ERA5 data provides the coordinates of the grid cell center. 
         To figure out how much of a cell is in a given region, we need to draw the rest of the cell's boundaries."""
-    dx = 0.25 #cells are 25 degrees by 25 degrees, as per ERA5 documentation
+    dx = 0.25 #cells are 0.25 degrees by 0.25 degrees, as per ERA5 documentation
     dy = 0.25
     rows= []
     # x & y are lists of cell centre coordinates (longitudes and latitudes)

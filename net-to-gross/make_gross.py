@@ -13,7 +13,6 @@ For every hour h of year y in region r:
     TRANSMISSION_LOSS       stand-in value (settings below) - replace with a sourced figure
 
 The left bank (Dnestroenergo) has no distributed capacity in RES.xlsx, so its DG is 0 and
-only the transmission losses are added.
 """
 
 #Imports
@@ -26,7 +25,7 @@ import openpyxl
 import pandas as pd
 from openpyxl.styles import Font, PatternFill
 
-# ================================================================ settings
+#Settings and global variables
 BASE = Path(__file__).resolve().parent
 LOAD_FILE = BASE / "Historical_hourly_electricity_load.xlsx"
 RES_FILE = BASE / "RES.xlsx"
@@ -37,24 +36,22 @@ OUT_FILE = BASE / "Historical_hourly_electricity_load_gross.xlsx"            # n
 OUT_FILE_GROSS_ONLY = BASE / "Historical_hourly_electricity_load_gross_only.xlsx"  # gross only, original layout
 YEARS = [2021, 2022, 2023, 2024, 2025]
 
-# Distributed capacity (MW). Latest values from the user.
+# Distributed capacity (MW). 
 SOLAR_MW_LATEST = 793.38
 WIND_MW_LATEST = 220.40
 # Capacity in each year as a fraction of the latest value.
 # STAND-IN: national trajectory from the NECP table in RES.xlsx (sheet 'NECP'):
 #   solar = PV including prosumers, wind = wind power plants, each divided by its 2025 value.
-#   The NECP 2025 value is a projection equal to 2024, and wind includes transmission-connected
-#   plants. Replace with actual distributed capacity per year (e.g. from ANRE) when available.
 NECP_SOLAR = {2021: 19.9, 2022: 68.1, 2023: 199.9, 2024: 395.4, 2025: 430.3}
 NECP_WIND = {2021: 87.6, 2022: 105.9, 2023: 121.3, 2024: 160.8, 2025: 160.8}
 SOLAR_MW = {y: SOLAR_MW_LATEST * NECP_SOLAR[y] / NECP_SOLAR[2025] for y in YEARS}
 WIND_MW = {y: WIND_MW_LATEST * NECP_WIND[y] / NECP_WIND[2025] for y in YEARS}
 
-# STAND-IN transmission losses as a fraction of (net + DG). Not from a source - replace.
+# stand in value for transmission losses
 TRANSMISSION_LOSS = 0.02
 
-RIGHT_REGIONS = ["A", "B", "C", "D", "E", "F"]   # columns 'Region A' ... in the load file
-LEFT_CF_TAB = "Dnestroenergo"                    # left-bank tab in the capacity factor files
+RIGHT_REGIONS = ["A", "B", "C", "D", "E", "F"]
+LEFT_CF_TAB = "Dnestroenergo"                    
 # --------------------------------------------------------------------------
 
 
@@ -182,8 +179,7 @@ def main():
 
 
 def write_gross_only():
-    """Copy of OUT_FILE with only the gross sheets, renamed 'Right bank' / 'Left bank',
-    so it has the same layout and sheet names as the original load workbook."""
+    """Copy of OUT_FILE with only the gross sheets, renamed 'Right bank' / 'Left bank'."""
     wb = openpyxl.load_workbook(OUT_FILE)
     for name in ("Right bank", "Left bank", "Gross summary"):
         del wb[name]
@@ -204,7 +200,7 @@ def write_gross_only():
         "Regional shares: RES.xlsx, 'Connected in 2026', columns K-L. Left bank: no distributed "
         "capacity listed -> DG = 0.",
         "Distribution losses are already in the net data and are not added again.",
-        f"STAND-IN: transmission loss = {TRANSMISSION_LOSS:.1%} (not from a source).",
+        f"STAND-IN: transmission loss = {TRANSMISSION_LOSS:.1%}).",
         f"STAND-IN: capacity per year = {SOLAR_MW_LATEST} MW solar / {WIND_MW_LATEST} MW wind x NECP "
         "trajectory year/2025 (RES.xlsx 'NECP'). Replace with actual yearly capacity when available.",
         "'Data notes (SEI)' describes the original NET data; its flagged cells carry over into these "

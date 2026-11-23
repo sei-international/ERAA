@@ -1,7 +1,7 @@
 """
 The purpose of this script is to fit the relationship between daily electricity demand & temperature for 
-every region of Moldova, 2021-2025, using USAID 2024 method (step 1: report p.34, Figure 30).
-This should return one cubic polynomial per region per year then averaged across the years. 
+every region of Moldova, 2021-2025, using USAID 2024 method. 
+This script returns one cubic polynomial per region per year then averaged across the years.
 
 1. Daily values. For each region and each calendar day (fixed UTC+2):
        daily load        = mean of the day's 24 hourly loads (MW)
@@ -16,12 +16,11 @@ This should return one cubic polynomial per region per year then averaged across
        f(T) = polyval(avg coefficients, clip(T, T_valid_min, T_valid_max))
 
 Time alignment: ALL data is put into UTC+2 (no daylight saving):
-    * Right bank: already fixed UTC+2. Timestamps hh:30 -> hour hh.
+    * Right bank: already fixed UTC+2. 
     * Left bank: local clock with daylight saving (Europe/Chisinau). Summer hours are
       moved one hour earlier; the non-existent spring hour (a filler copy in the file)
       is dropped; the autumn hour that occurs twice in local time is restored - split in
       half if the two hours were summed into one row, else interpolated.
-    * Temperature: temperature_by_region_<year>.xlsx, already UTC+2.
 
 Outputs (fit_output/)
     demand_temperature_cubic_2021_2025.xlsx
@@ -49,7 +48,7 @@ TEMP_DIR = BASE / "temperature_values"
 OUT_DIR = BASE / "fit_output"
 YEARS = range(2021, 2026)
 FIXED_TZ = "Etc/GMT-2"            # fixed UTC+2
-LEFT_BANK_TZ = "Europe/Chisinau"  # local time with daylight saving
+LEFT_BANK_TZ = "Europe/Chisinau"  # local time with daylight savings
 DEGREE = 3
 
 LEFT_BANK_TAB = None   # name of the left-bank tab in the temperature workbooks;
@@ -69,7 +68,7 @@ EXCLUDE_DAYS = {
     "2022-11-23": "blackout",
     "2022-10-30": "left bank: whole day copied from 2023-10-29",
 }
-# Single-hour errors, given in the ORIGINAL timestamps of the load file
+# Single-hour errors, given in the original timestamps of the load data
 SPIKES = [
     ("C", "2025-02-04 18:30"), ("C", "2025-11-20 15:30"), ("C", "2025-12-12 03:30"),
     ("LEFT", "2023-09-09 02:30"),
@@ -108,7 +107,7 @@ def read_right_bank(year, raw, fixes):
             fixes.append(dict(series=reg, time=ts, value_MW=round(df.at[ts, reg], 1),
                               action="single-hour error -> interpolated"))
             df.at[ts, reg] = np.nan
-    df.index = df.index.floor("h")                      # fixed UTC+2, hh:30 -> hour hh
+    df.index = df.index.floor("h")             
     df = df[~df.index.duplicated()]
     return df.interpolate(limit=3)
 
@@ -186,7 +185,7 @@ def read_temperature(year):
     temps = {}
     for reg, df in tabs.items():
         df.index = pd.to_datetime(df.index)
-        temps[reg] = df["region_mean_K"] - 273.15          # K -> deg C (average for the region for that hour)
+        temps[reg] = df["region_mean_K"] - 273.15  # K -> deg C (average for the region for that hour)
     return pd.DataFrame(temps)
 
 
