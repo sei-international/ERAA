@@ -1,12 +1,5 @@
 """
-make_gross.py
-------------------
-Converts the NET hourly regional load in "Historical_hourly_electricity_load.xlsx" to GROSS
-load and writes it to new sheets in a copy of the workbook. The original sheets are not changed.
-
-Why: the regional load is metered on the 10/35 kV side of the substations. It already
-includes distribution losses, but distributed generation (DG) connected at 10-35 kV and
-below has been subtracted (see 'Data notes (SEI)' and Energy.xlsx, note in F10).
+The purpose of this script is to convert the NET hourly regional electricity load in "Historical_hourly_electricity_load.xlsx" to GROSS load, by adding distributed generation (DG) and transmission losses.
 
 For every hour h of year y in region r:
     DG(h)    = solar_CF_r(h) x solar_MW(y) x solar_share_r  +  wind_CF_r(h) x wind_MW(y) x wind_share_r
@@ -21,19 +14,9 @@ For every hour h of year y in region r:
 
 The left bank (Dnestroenergo) has no distributed capacity in RES.xlsx, so its DG is 0 and
 only the transmission losses are added.
-
-Time basis: right-bank load is fixed UTC+2, timestamps hh:30 = hour hh:00-hh+1:00.
-The capacity factor of local hour hh:00 (column 'time_local_UTC+2') is used for it.
-The first two local hours of a year sit in the previous year's capacity factor file.
-
-Outputs
-    Historical_hourly_electricity_load_gross.xlsx       original sheets + new sheets
-        Right bank (gross)   same layout as 'Right bank', gross values (MW)
-        Left bank (gross)    same layout as 'Left bank', gross values (MW)
-        Gross summary        inputs used + annual net / gross energy per region (formulas)
-    Historical_hourly_electricity_load_gross_only.xlsx  gross only, same sheet names and
-        layout as the original ('Right bank', 'Left bank', 'Data notes (SEI)') + 'Gross notes'
 """
+
+#Imports
 
 import sys
 from pathlib import Path
